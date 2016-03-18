@@ -4,6 +4,30 @@ import {Router} from 'angular2/router';
 import {Token} from './../dto/token';
 import {LoginService} from './../service/login';
 
+abstract class Signer {
+    failed = false;
+    credential: Credential = new Credential();
+    token: Token;
+    
+    getCredential() {
+        return this.credential;
+    }
+    
+    setToken(token) {
+        this.token = token;
+    }
+    
+    abstract getLoginService() : LoginService;
+    
+    protected authenticate(signUpOn: Signum) {
+        this.getCredential().setSignUpOn(signUpOn);
+        this.failed = false;
+        this.getLoginService().authenticate(this.getCredential())
+            .subscribe(token => this.setToken(token),
+            error => this.failed = true);
+    }
+}
+
 export class Credential {
     private signUpOn: Signum;
 
@@ -58,22 +82,16 @@ export enum Signum {
       </div>
             `,
 })
-export class SignUp implements Auth {
-    credential: Credential = new Credential();
+export class SignUp extends Signer implements Auth {
     signUpOn = Signum.SignUp;
-    token: Token;
-    failed: Boolean = false;
-
-    protected authenticate(signUpOn: Signum) {
-        this.credential.setSignUpOn(signUpOn);
-        this.failed = false;
-        this.loginService.authenticate(this.credential)
-            .subscribe(token => this.token = token,
-            error => this.failed = true);
+    
+    constructor(private __loginService: LoginService) {
+        super();
+        this.__loginService = __loginService;
     }
     
-    constructor(private loginService: LoginService) {
-        this.loginService = loginService;
+    getLoginService() {
+        return this.__loginService;
     }
 
     auth() {
@@ -117,28 +135,23 @@ export class SignUp implements Auth {
       </div>
             `
 })
-export class SignOn implements Auth {
-    credential: Credential = new Credential();
+export class SignOn extends Signer implements Auth{
+
     signUpOn = Signum.SignOn;
-    token: Token;
-    failed: Boolean = false;
 
     constructor(private __loginService: LoginService,
                 private __router: Router) {
+        super();
         this.__loginService = __loginService;
         this.__router = __router;
+    }
+   
+    getLoginService() {
+        return this.__loginService;
     }
     
     signUp() {
         this.__router.navigate(['SignUp']);
-    }
-    
-    protected authenticate(signUpOn: Signum) {
-        this.credential.setSignUpOn(signUpOn);
-        this.failed = false;
-        this.__loginService.authenticate(this.credential)
-            .subscribe(token => this.token = token,
-            error => this.failed = true);
     }
     
     auth() {
@@ -146,3 +159,4 @@ export class SignOn implements Auth {
     }
 
 }
+
