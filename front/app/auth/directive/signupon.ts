@@ -22,7 +22,7 @@ abstract class Signer {
     protected authenticate(signUpOn: Signum) {
         this.getCredential().setSignUpOn(signUpOn);
         this.failed = false;
-        this.getLoginService().authenticate(this.getCredential())
+        return this.getLoginService().authenticate(this.getCredential())
             .subscribe(token => this.setToken(token),
             error => this.failed = true);
     }
@@ -95,7 +95,8 @@ export class SignUp extends Signer implements Auth {
     }
 
     auth() {
-        this.authenticate(this.signUpOn);
+        let out = this.authenticate(this.signUpOn);
+        
     }
 
 }
@@ -127,11 +128,11 @@ export class SignUp extends Signer implements Auth {
                 </div>
             </div>
             <div class="centered">
-                <button type="submit">SignOn</button>
+                <button type="submit">Sign On</button>
             </div>
             
         </form>
-        <p>Don't have an account? <a (click)="signUp()">Sign up</a></p>
+        <p>Don't have an account? <a (click)="signUp()">Sign Up</a></p>
       </div>
             `
 })
