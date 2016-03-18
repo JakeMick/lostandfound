@@ -22,7 +22,7 @@ abstract class Signer {
     protected authenticate(signUpOn: Signum) {
         this.getCredential().setSignUpOn(signUpOn);
         this.failed = false;
-        this.getLoginService().authenticate(this.getCredential())
+        return this.getLoginService().authenticate(this.getCredential())
             .subscribe(token => this.setToken(token),
             error => this.failed = true);
     }
@@ -95,7 +95,8 @@ export class SignUp extends Signer implements Auth {
     }
 
     auth() {
-        this.authenticate(this.signUpOn);
+        let out = this.authenticate(this.signUpOn);
+        
     }
 
 }
