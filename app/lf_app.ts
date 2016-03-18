@@ -25,9 +25,6 @@ import {RouteConfig, ROUTER_PROVIDERS, ROUTER_DIRECTIVES} from 'angular2/router'
         </section>
     </nav>
     <router-outlet></router-outlet>
-    <footer>
-        <a class="footer" [routerLink]="['SignUp']">Sign up</a>
-    </footer>
 
     `,
     directives: [ROUTER_DIRECTIVES,
@@ -46,7 +43,8 @@ import {RouteConfig, ROUTER_PROVIDERS, ROUTER_DIRECTIVES} from 'angular2/router'
     {
         path: '/',
         name: 'SignOn',
-        component: SignOn
+        component: SignOn,
+        useAsDefault: true
     }
 ])
 export class LFApp {

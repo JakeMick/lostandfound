@@ -1,5 +1,6 @@
 import {Auth} from './auth';
 import {Component, Injectable} from 'angular2/core';
+import {Router} from 'angular2/router';
 import {Token} from './../dto/token';
 import {LoginService} from './../service/login';
 
@@ -51,7 +52,7 @@ export enum Signum {
                 </div>
             </div>
             <div class="centered">
-                <button type="submit">SignUn</button>
+                <button type="submit">Sign Up</button>
             </div>
       </form>
       </div>
@@ -110,7 +111,9 @@ export class SignUp implements Auth {
             <div class="centered">
                 <button type="submit">SignOn</button>
             </div>
+            
         </form>
+        <p>Don't have an account? <a (click)="signUp()">Sign up</a></p>
       </div>
             `
 })
@@ -120,14 +123,20 @@ export class SignOn implements Auth {
     token: Token;
     failed: Boolean = false;
 
-    constructor(private loginService: LoginService) {
-        this.loginService = loginService;
+    constructor(private __loginService: LoginService,
+                private __router: Router) {
+        this.__loginService = __loginService;
+        this.__router = __router;
+    }
+    
+    signUp() {
+        this.__router.navigate(['SignUp']);
     }
     
     protected authenticate(signUpOn: Signum) {
         this.credential.setSignUpOn(signUpOn);
         this.failed = false;
-        this.loginService.authenticate(this.credential)
+        this.__loginService.authenticate(this.credential)
             .subscribe(token => this.token = token,
             error => this.failed = true);
     }
