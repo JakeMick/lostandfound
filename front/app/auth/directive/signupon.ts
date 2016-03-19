@@ -3,74 +3,21 @@ import {Component, Injectable} from 'angular2/core';
 import {Router} from 'angular2/router';
 import {Token} from './../dto/token';
 import {LoginService} from './../service/login';
+import {Credential, EmailTracker} from '../dto/email';
 
-abstract class Signer {
-    failed = false;
-    credential: Credential = new Credential();
-    token: Token;
-    
-    getCredential() {
-        return this.credential;
-    }
-    
-    setToken(token) {
-        this.token = token;
-    }
-    
-    abstract getLoginService() : LoginService;
-    
-    protected authenticate(signUpOn: Signum) {
-        this.getCredential().setSignUpOn(signUpOn);
-        this.failed = false;
-        return this.getLoginService().authenticate(this.getCredential())
-            .subscribe(token => this.setToken(token),
-            error => this.failed = true);
-    }
-}
-
-export class Credential {
-    private signUpOn: Signum;
-
-    email: string;
-    password: string;
-
-    constructor() {
-        this.email = '';
-        this.password = '';
-    }
-
-    setSignUpOn(signUpOn: Signum) {
-        this.signUpOn = signUpOn;
-    }
-}
-
-export enum Signum {
-    SignUp,
-    SignOn
-}
 
 @Component({
     selector: 'signup-form',
     template: `
       <div class="signup-panel">
         <p class="welcome">Sign-up</p>
-      <form (ngSubmit)="auth()">
+      <form (ngSubmit)="sendTracker()">
             <div class="row collapse">
                 <div class="small-2 small-offset-3 columns">
                     <span class="prefix"><i class="fi-mail"></i></span>
                 </div>
                 <div class="small-4 columns">
-                    <input type="text" [(ngModel)]="credential.email" placeholder="email" required>
-                </div>
-                <div class="small-4 columns">
-                </div>
-            </div>
-            <div class="row collapse">
-                <div class="small-2 small-offset-3 columns ">
-                    <span class="prefix"><i class="fi-lock"></i></span>
-                </div>
-                <div class="small-4 columns">
-                    <input type="text" [(ngModel)]="credential.password" placeholder="password" required>
+                    <input type="text" [(ngModel)]="emailTracker.email" placeholder="email" required>
                 </div>
                 <div class="small-4 columns">
                 </div>
@@ -82,11 +29,11 @@ export enum Signum {
       </div>
             `,
 })
-export class SignUp extends Signer implements Auth {
-    signUpOn = Signum.SignUp;
+export class SignUp {
+    
+    emailTracker: EmailTracker = new EmailTracker();
     
     constructor(private __loginService: LoginService) {
-        super();
         this.__loginService = __loginService;
     }
     
@@ -94,8 +41,10 @@ export class SignUp extends Signer implements Auth {
         return this.__loginService;
     }
 
-    auth() {
-        let out = this.authenticate(this.signUpOn);
+    sendTracker() {
+        let out = this.__loginService.sendTracker(this.emailTracker)
+                    .subscribe(res => console.log(res),
+                               error => console.log(error));
         
     }
 
@@ -136,13 +85,13 @@ export class SignUp extends Signer implements Auth {
       </div>
             `
 })
-export class SignOn extends Signer implements Auth{
-
-    signUpOn = Signum.SignOn;
-
+export class SignOn {
+    failed = false;
+    credential: Credential = new Credential();
+    token: Token;
+    
     constructor(private __loginService: LoginService,
                 private __router: Router) {
-        super();
         this.__loginService = __loginService;
         this.__router = __router;
     }
@@ -156,7 +105,11 @@ export class SignOn extends Signer implements Auth{
     }
     
     auth() {
-        this.authenticate(this.signUpOn);
+        this.failed = false;
+        return this.getLoginService()
+            .authenticate(this.credential)
+            .subscribe(token => this.token = token,
+                       error => this.failed = true);
     }
 
 }

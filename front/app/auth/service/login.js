@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http', 'rxjs/Observable'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', '../../config'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable'], function(
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1, Observable_1;
+    var core_1, http_1, Observable_1, config_1;
     var LoginService;
     return {
         setters:[
@@ -22,13 +22,31 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable'], function(
             },
             function (Observable_1_1) {
                 Observable_1 = Observable_1_1;
+            },
+            function (config_1_1) {
+                config_1 = config_1_1;
             }],
         execute: function() {
             LoginService = (function () {
-                function LoginService(http) {
+                function LoginService(http, config) {
                     this.http = http;
-                    this.loginUrl = 'api/authenticate';
+                    this.config = config;
+                    this.loginUrl = this.config.restUrl + 'auth/authenticate';
+                    this.trackerUrl = this.config.restUrl + 'auth/tracker';
                 }
+                LoginService.prototype.sendTracker = function (emailTracker) {
+                    //let body = JSON.stringify(emailTracker);
+                    var params = new http_1.URLSearchParams();
+                    params.set('email', emailTracker.email);
+                    var headers = new http_1.Headers({ 'Content-Type': 'application/json' });
+                    var options = new http_1.RequestOptions({
+                        headers: headers,
+                        search: params
+                    });
+                    return this.http.post(this.trackerUrl, '', options)
+                        .map(function (res) { return res.json().data; })
+                        .catch(this.handleError);
+                };
                 LoginService.prototype.authenticate = function (credential) {
                     var body = JSON.stringify(credential);
                     var headers = new http_1.Headers({ 'Content-Type': 'application/json' });
@@ -42,7 +60,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable'], function(
                 };
                 LoginService = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [http_1.Http])
+                    __metadata('design:paramtypes', [http_1.Http, config_1.ConfigService])
                 ], LoginService);
                 return LoginService;
             }());

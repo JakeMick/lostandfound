@@ -1,7 +1,11 @@
 server:
   rootPath: /api/
 
-expirationSeconds: 1000000
+auth:
+  baseUrl: derp.org
+  expirationSeconds: 1000000
+  sendGridUser: jacob.mick
+  sendGridPass: 6tcYbI7hOOBx
 
 database:
   # the name of your JDBC driver

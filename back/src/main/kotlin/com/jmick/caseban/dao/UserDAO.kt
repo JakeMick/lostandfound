@@ -25,17 +25,11 @@ public interface UserDAO {
                    @Bind("email") email: String,
                    @Bind("hash") hash: ByteArray)
 
-    @SqlQuery("""select tracker
-                 from email_tracking
-                 where email = :email
-                 limit 1""")
-    fun trackerByEmail(@Bind("email") email: String) : String?
-
-    @SqlUpdate("""insert into email_tracking (tracker, email)
-                    values
-                  ((SELECT md5(random()\:\:text || clock_timestamp()\:\:text)\:\:uuid), :email)
-                """)
-    fun generateTracker(@Bind("email") email: String)
+    @SqlQuery("""insert into email_tracking (tracker, email)
+                select (SELECT md5(random()\:\:text || clock_timestamp()\:\:text)\:\:uuid), :email
+                where not exists (select 1 from email_tracking where email = :email)
+                returning tracker""")
+    fun generateTracker(@Bind("email") email: String) : String?
 
 
 }

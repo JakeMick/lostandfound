@@ -2,6 +2,7 @@ import {Component} from 'angular2/core';
 import {SignUp} from './auth/directive/signupon';
 import {SignOn} from './auth/directive/signupon';
 import {HTTP_PROVIDERS} from 'angular2/http';
+import {ConfigService} from './config'
 import {LoginService} from './auth/service/login';
 import {RouteConfig, ROUTER_PROVIDERS, ROUTER_DIRECTIVES} from 'angular2/router';
 
@@ -32,7 +33,8 @@ import {RouteConfig, ROUTER_PROVIDERS, ROUTER_DIRECTIVES} from 'angular2/router'
                  SignOn],
     providers: [ROUTER_PROVIDERS,
                 HTTP_PROVIDERS,
-                LoginService] 
+                LoginService,
+                ConfigService] 
 })
 @RouteConfig([
     {

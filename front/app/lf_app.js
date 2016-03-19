@@ -1,4 +1,4 @@
-System.register(['angular2/core', './auth/directive/signupon', 'angular2/http', './auth/service/login', 'angular2/router'], function(exports_1, context_1) {
+System.register(['angular2/core', './auth/directive/signupon', 'angular2/http', './config', './auth/service/login', 'angular2/router'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', './auth/directive/signupon', 'angular2/http', 
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, signupon_1, signupon_2, http_1, login_1, router_1;
+    var core_1, signupon_1, signupon_2, http_1, config_1, login_1, router_1;
     var LFApp;
     return {
         setters:[
@@ -23,6 +23,9 @@ System.register(['angular2/core', './auth/directive/signupon', 'angular2/http', 
             },
             function (http_1_1) {
                 http_1 = http_1_1;
+            },
+            function (config_1_1) {
+                config_1 = config_1_1;
             },
             function (login_1_1) {
                 login_1 = login_1_1;
@@ -43,7 +46,8 @@ System.register(['angular2/core', './auth/directive/signupon', 'angular2/http', 
                             signupon_2.SignOn],
                         providers: [router_1.ROUTER_PROVIDERS,
                             http_1.HTTP_PROVIDERS,
-                            login_1.LoginService]
+                            login_1.LoginService,
+                            config_1.ConfigService]
                     }),
                     router_1.RouteConfig([
                         {

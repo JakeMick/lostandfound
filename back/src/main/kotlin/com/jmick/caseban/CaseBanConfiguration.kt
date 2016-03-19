@@ -8,12 +8,20 @@ import java.nio.charset.Charset
 import javax.validation.Valid
 import javax.validation.constraints.NotNull
 
-public class CaseBanConfiguration() : Configuration() {
+class CaseBanConfiguration() : Configuration() {
 
     @Valid
     @NotNull
     @JsonProperty
-    var expirationSeconds: Int = 0
+    val auth = AuthenticationConfig()
+
+    fun getAuthenticationConfig() : AuthenticationConfig {
+        return auth
+    }
+
+//    fun setAuthenticationConfig(authenticationConfig: AuthenticationConfig) {
+//        this.auth = auth
+//    }
 
     val UTF8 = Charset.forName("UTF-8")
 
@@ -28,5 +36,29 @@ public class CaseBanConfiguration() : Configuration() {
 
     @NotEmpty
     val jwtTokenSecret = "ya2ibxeqdy4k3x6rlwufo4bwlp39hf".toByteArray(UTF8);
+
+}
+
+class AuthenticationConfig {
+    @Valid
+    @NotNull
+    @JsonProperty
+    val sendGridUser: String = ""
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    val sendGridPass: String = ""
+
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    val baseUrl: String = ""
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    var expirationSeconds: Int = 0
 
 }
