@@ -26,7 +26,8 @@ export class LoginService {
         
         return this.http.post(this.trackerUrl, '', options)
             .map(res => <String>res.json().data)
-            .catch(this.handleError)
+            //.catch(this.handleError)
+            ;
     }
 
     authenticate(credential: Credential) : Observable<Token> {
@@ -34,12 +35,13 @@ export class LoginService {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         return this.http.post(this.loginUrl, body)
             .map(res => <Token>res.json().data)
-            .catch(this.handleError);
+            //.catch(this.handleError)
+           ;
     }
     
     private handleError(error: Response) {
         console.error(error);
-        return Observable.throw(error.json().error || 'Server error');
+        return Observable.throw(error.status);
     }
 }
 

@@ -1,8 +1,10 @@
 server:
   rootPath: /api/
 
+corsEnabled: true
+
 auth:
-  baseUrl: derp.org
+  baseUrl: localhost:3000
   expirationSeconds: 1000000
   sendGridUser: jacob.mick
   sendGridPass: 6tcYbI7hOOBx

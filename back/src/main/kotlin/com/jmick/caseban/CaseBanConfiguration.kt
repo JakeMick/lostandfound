@@ -13,15 +13,16 @@ class CaseBanConfiguration() : Configuration() {
     @Valid
     @NotNull
     @JsonProperty
+    val corsEnabled = false
+
+    @Valid
+    @NotNull
+    @JsonProperty
     val auth = AuthenticationConfig()
 
     fun getAuthenticationConfig() : AuthenticationConfig {
         return auth
     }
-
-//    fun setAuthenticationConfig(authenticationConfig: AuthenticationConfig) {
-//        this.auth = auth
-//    }
 
     val UTF8 = Charset.forName("UTF-8")
 

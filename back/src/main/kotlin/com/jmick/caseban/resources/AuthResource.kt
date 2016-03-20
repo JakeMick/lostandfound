@@ -47,16 +47,25 @@ class AuthResource(val userDao: UserDAO,
     @Path("/tracker")
     fun generateTracker(@Valid @QueryParam("email") email: String?): Response {
         if (email == null) {
-            return Response.status(Response.Status.CONFLICT).build()
+            return Response
+                    .status(Response.Status.CONFLICT)
+                    .header("FAILED", "Email was not supplied")
+                    .build()
         }
         try {
-            val res = userDao.generateTracker(email) ?: return Response.status(Response.Status.CONFLICT).build()
+            val res = userDao.generateTracker(email) ?: return Response
+                    .status(Response.Status.CONFLICT)
+                    .header("FAILED", "Email already has tracker")
+                    .build()
             sendTrackerEmail(email, res)
             return Response.status(Response.Status.ACCEPTED).build()
         } catch (e: UnableToExecuteStatementException) {
             // technically the generate tracker statement has a small race condition depending on the isolation level
             // we catch it here so it matches the contract of error codes above
-            return Response.status(Response.Status.CONFLICT).build()
+            return Response
+                    .status(Response.Status.CONFLICT)
+                    .header("FAILED", "RACE CONDITIION")
+                    .build()
         }
     }
 

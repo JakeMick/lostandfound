@@ -44,19 +44,17 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', '../../con
                         search: params
                     });
                     return this.http.post(this.trackerUrl, '', options)
-                        .map(function (res) { return res.json().data; })
-                        .catch(this.handleError);
+                        .map(function (res) { return res.json().data; });
                 };
                 LoginService.prototype.authenticate = function (credential) {
                     var body = JSON.stringify(credential);
                     var headers = new http_1.Headers({ 'Content-Type': 'application/json' });
                     return this.http.post(this.loginUrl, body)
-                        .map(function (res) { return res.json().data; })
-                        .catch(this.handleError);
+                        .map(function (res) { return res.json().data; });
                 };
                 LoginService.prototype.handleError = function (error) {
                     console.error(error);
-                    return Observable_1.Observable.throw(error.json().error || 'Server error');
+                    return Observable_1.Observable.throw(error.status);
                 };
                 LoginService = __decorate([
                     core_1.Injectable(), 

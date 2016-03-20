@@ -1,5 +1,6 @@
 import {Auth} from './auth';
 import {Component, Injectable} from 'angular2/core';
+import {Response} from 'angular2/http';
 import {Router} from 'angular2/router';
 import {Token} from './../dto/token';
 import {LoginService} from './../service/login';
@@ -26,12 +27,21 @@ import {Credential, EmailTracker} from '../dto/email';
                 <button type="submit">Sign Up</button>
             </div>
       </form>
+        <div class="row collapse" *ngIf="isFailed">
+            <div class="medium-2 medium-offset-5 columns">
+                <div data-alert class="alert-box alert radius">
+                    <p>{{errorMsg}}</p>
+                </div>
+            </div>
+        </div>
       </div>
             `,
 })
 export class SignUp {
     
     emailTracker: EmailTracker = new EmailTracker();
+    isFailed = false;
+    errorMsg = "";
     
     constructor(private __loginService: LoginService) {
         this.__loginService = __loginService;
@@ -44,8 +54,12 @@ export class SignUp {
     sendTracker() {
         let out = this.__loginService.sendTracker(this.emailTracker)
                     .subscribe(res => console.log(res),
-                               error => console.log(error));
-        
+                               error => this.handleError(error));
+    }
+    
+    handleError(error: Response) {
+        this.isFailed = true;
+        this.errorMsg = error.headers.get("FAILED");
     }
 
 }

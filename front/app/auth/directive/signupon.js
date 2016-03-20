@@ -31,19 +31,26 @@ System.register(['angular2/core', 'angular2/router', './../service/login', '../d
                 function SignUp(__loginService) {
                     this.__loginService = __loginService;
                     this.emailTracker = new email_1.EmailTracker();
+                    this.isFailed = false;
+                    this.errorMsg = "";
                     this.__loginService = __loginService;
                 }
                 SignUp.prototype.getLoginService = function () {
                     return this.__loginService;
                 };
                 SignUp.prototype.sendTracker = function () {
+                    var _this = this;
                     var out = this.__loginService.sendTracker(this.emailTracker)
-                        .subscribe(function (res) { return console.log(res); }, function (error) { return console.log(error); });
+                        .subscribe(function (res) { return console.log(res); }, function (error) { return _this.handleError(error); });
+                };
+                SignUp.prototype.handleError = function (error) {
+                    this.isFailed = true;
+                    this.errorMsg = error.headers.get("FAILED");
                 };
                 SignUp = __decorate([
                     core_1.Component({
                         selector: 'signup-form',
-                        template: "\n      <div class=\"signup-panel\">\n        <p class=\"welcome\">Sign-up</p>\n      <form (ngSubmit)=\"sendTracker()\">\n            <div class=\"row collapse\">\n                <div class=\"small-2 small-offset-3 columns\">\n                    <span class=\"prefix\"><i class=\"fi-mail\"></i></span>\n                </div>\n                <div class=\"small-4 columns\">\n                    <input type=\"text\" [(ngModel)]=\"emailTracker.email\" placeholder=\"email\" required>\n                </div>\n                <div class=\"small-4 columns\">\n                </div>\n            </div>\n            <div class=\"centered\">\n                <button type=\"submit\">Sign Up</button>\n            </div>\n      </form>\n      </div>\n            ",
+                        template: "\n      <div class=\"signup-panel\">\n        <p class=\"welcome\">Sign-up</p>\n      <form (ngSubmit)=\"sendTracker()\">\n            <div class=\"row collapse\">\n                <div class=\"small-2 small-offset-3 columns\">\n                    <span class=\"prefix\"><i class=\"fi-mail\"></i></span>\n                </div>\n                <div class=\"small-4 columns\">\n                    <input type=\"text\" [(ngModel)]=\"emailTracker.email\" placeholder=\"email\" required>\n                </div>\n                <div class=\"small-4 columns\">\n                </div>\n            </div>\n            <div class=\"centered\">\n                <button type=\"submit\">Sign Up</button>\n            </div>\n      </form>\n        <div class=\"row collapse\" *ngIf=\"isFailed\">\n            <div class=\"medium-2 medium-offset-5 columns\">\n                <div data-alert class=\"alert-box alert radius\">\n                    <p>{{errorMsg}}</p>\n                </div>\n            </div>\n        </div>\n      </div>\n            ",
                     }), 
                     __metadata('design:paramtypes', [login_1.LoginService])
                 ], SignUp);

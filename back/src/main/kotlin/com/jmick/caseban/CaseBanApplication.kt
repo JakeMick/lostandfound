@@ -34,12 +34,9 @@ class CaseBanApplication() : Application<CaseBanConfiguration>() {
 
 
     override fun run(config: CaseBanConfiguration, env: Environment) {
-        val corsFilter = env.servlets().addFilter("CORS", CrossOriginFilter::class.java)
-        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,DELETE,OPTIONS")
-        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*")
-        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin")
-        corsFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType::class.java), true, "/*")
-
+        if (config.corsEnabled) {
+            enableCors(env)
+        }
 
         env.jersey().urlPattern = "/api/*"
 
@@ -75,6 +72,14 @@ class CaseBanApplication() : Application<CaseBanConfiguration>() {
 
         val authHealthCheck = AuthHealthCheck(userDao)
         env.healthChecks().register("user dao health check", authHealthCheck);
+    }
+
+    private fun enableCors(env: Environment) {
+        val corsFilter = env.servlets().addFilter("CORS", CrossOriginFilter::class.java)
+        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,DELETE,OPTIONS")
+        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*")
+        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin")
+        corsFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType::class.java), true, "/*")
     }
 
 }
