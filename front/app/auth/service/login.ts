@@ -1,7 +1,7 @@
 import {Injectable}                               from 'angular2/core';
 import {Http, Response, Headers, URLSearchParams,
         RequestOptions} from 'angular2/http';
-import {Credential, EmailTracker}                 from '../dto/email';
+import {Credential, Email, User}           from '../dto/email';
 import {Token}                                    from '../dto/token';
 import {Observable}                               from 'rxjs/Observable';
 import {ConfigService}                            from '../../config';
@@ -11,11 +11,20 @@ export class LoginService {
     constructor(private http: Http,
                 private config: ConfigService) { }
 
-    private loginUrl = this.config.restUrl + 'auth/authenticate';
+    private loginUrl = this.config.restUrl + 'auth/token';
     private trackerUrl = this.config.restUrl + 'auth/tracker';
+    private userUrl = this.config.restUrl + 'auth/user';
     
-    sendTracker(emailTracker: EmailTracker) : Observable<String> {
-        //let body = JSON.stringify(emailTracker);
+    create(user: User) : Observable<any> {
+        let body = JSON.stringify(user);
+        let headers = new Headers({'Content-Type' : 'application/json'});
+        let options = new RequestOptions({
+            headers: headers
+        });
+        return this.http.post(this.userUrl, body, options);
+    }
+    
+    sendTracker(emailTracker: Email) : Observable<any> {
         let params = new URLSearchParams();
         params.set('email', emailTracker.email); 
         let headers = new Headers({'Content-Type': 'application/json'});
@@ -25,23 +34,22 @@ export class LoginService {
         });
         
         return this.http.post(this.trackerUrl, '', options)
-            .map(res => <String>res.json().data)
-            //.catch(this.handleError)
-            ;
+            .map(res => res);
     }
 
     authenticate(credential: Credential) : Observable<Token> {
-        let body = JSON.stringify(credential);
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        return this.http.post(this.loginUrl, body)
-            .map(res => <Token>res.json().data)
-            //.catch(this.handleError)
-           ;
-    }
-    
-    private handleError(error: Response) {
-        console.error(error);
-        return Observable.throw(error.status);
+        
+        let body = JSON.stringify(credential)
+
+        let headers = new Headers({
+            'Content-Type': 'application/json',
+        });
+        
+        let options = new RequestOptions({
+            headers: headers
+        });
+        return this.http.post(this.loginUrl, body, options)
+            .map(res => <Token>res.json().data);
     }
 }
 

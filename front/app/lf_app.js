@@ -1,4 +1,4 @@
-System.register(['angular2/core', './auth/directive/signupon', 'angular2/http', './config', './auth/service/login', 'angular2/router'], function(exports_1, context_1) {
+System.register(['angular2/core', './auth/directive/signup', './auth/directive/signon', './auth/directive/respond', 'angular2/http', './config', './auth/service/login', 'angular2/router'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,16 +10,21 @@ System.register(['angular2/core', './auth/directive/signupon', 'angular2/http', 
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, signupon_1, signupon_2, http_1, config_1, login_1, router_1;
+    var core_1, signup_1, signon_1, respond_1, http_1, config_1, login_1, router_1;
     var LFApp;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (signupon_1_1) {
-                signupon_1 = signupon_1_1;
-                signupon_2 = signupon_1_1;
+            function (signup_1_1) {
+                signup_1 = signup_1_1;
+            },
+            function (signon_1_1) {
+                signon_1 = signon_1_1;
+            },
+            function (respond_1_1) {
+                respond_1 = respond_1_1;
             },
             function (http_1_1) {
                 http_1 = http_1_1;
@@ -42,8 +47,8 @@ System.register(['angular2/core', './auth/directive/signupon', 'angular2/http', 
                         selector: 'lf-app',
                         template: "\n    <nav class=\"top-bar\" data-topbar role=\"navigation\">\n        <ul class=\"title-area\">\n            <li class=\"name\">\n                <h1><a href=\"/\">LF</a></h1>\n            </li>\n            <li class=\"toggle-topbar menu-icon\">\n                <a href=\"#\"><span>Menu</span></a>\n            </li>\n        </ul>\n\n        <section class=\"top-bar-section\">\n            <ul class=\"left\">\n                <li><a [routerLink]=\"['SignOn']\">Login</a></li>\n            </ul>\n        </section>\n    </nav>\n    <router-outlet></router-outlet>\n\n    ",
                         directives: [router_1.ROUTER_DIRECTIVES,
-                            signupon_1.SignUp,
-                            signupon_2.SignOn],
+                            signup_1.SignUp,
+                            signon_1.SignOn],
                         providers: [router_1.ROUTER_PROVIDERS,
                             http_1.HTTP_PROVIDERS,
                             login_1.LoginService,
@@ -53,13 +58,18 @@ System.register(['angular2/core', './auth/directive/signupon', 'angular2/http', 
                         {
                             path: '/signup',
                             name: 'SignUp',
-                            component: signupon_1.SignUp
+                            component: signup_1.SignUp
                         },
                         {
                             path: '/',
                             name: 'SignOn',
-                            component: signupon_2.SignOn,
+                            component: signon_1.SignOn,
                             useAsDefault: true
+                        },
+                        {
+                            path: '/respond/:tracker',
+                            name: 'Respond',
+                            component: respond_1.Respond
                         }
                     ]), 
                     __metadata('design:paramtypes', [])
