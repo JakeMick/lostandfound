@@ -1,5 +1,5 @@
 import {Auth} from './auth';
-import {Component, Injectable} from 'angular2/core';
+import {Component} from 'angular2/core';
 import {Response} from 'angular2/http';
 import {Router} from 'angular2/router';
 import {Token} from './../dto/token';
@@ -38,12 +38,20 @@ import {Credential} from '../dto/email';
             </div>
             
         </form>
+        <div class="row collapse" *ngIf="isFailed">
+            <div class="medium-2 medium-offset-5 columns">
+                <div data-alert class="alert-box alert radius">
+                    <p>{{errorMsg}}</p>
+                </div>
+            </div>
+        </div>
         <p>Don't have an account? <a (click)="signUp()">Sign Up</a></p>
       </div>
             `
 })
 export class SignOn {
-    failed = false;
+    isFailed = false;
+    errorMsg = '';
     credential: Credential = new Credential();
     token: Token;
     
@@ -62,11 +70,23 @@ export class SignOn {
     }
     
     auth() {
-        this.failed = false;
+        this.isFailed = false;
         return this.getLoginService()
             .authenticate(this.credential)
-            .subscribe(token => this.token = token,
-                       error => this.failed = true);
+            .subscribe(token => this.gotoLobby(),
+                       error => this.failLogin(error));
+    }
+    
+    failLogin(error: Response) {
+        this.isFailed = true;
+        if (error.status == 401) {
+            this.errorMsg = 'Email or password is incorrect';
+        }
+    }
+    
+    gotoLobby() {
+        this.isFailed = false;
+        this.__router.navigate(['Lobby']);
     }
 
 }

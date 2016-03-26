@@ -2,6 +2,10 @@ import {Component} from 'angular2/core';
 import {SignUp} from './auth/directive/signup';
 import {SignOn} from './auth/directive/signon';
 import {Respond} from './auth/directive/respond';
+
+import {Lobby} from './lobby/directive/lobby';
+import {LobbyService} from './lobby/service/lobbycon';
+
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {ConfigService} from './config'
 import {LoginService} from './auth/service/login';
@@ -35,7 +39,9 @@ import {RouteConfig, ROUTER_PROVIDERS, ROUTER_DIRECTIVES} from 'angular2/router'
     providers: [ROUTER_PROVIDERS,
                 HTTP_PROVIDERS,
                 LoginService,
-                ConfigService] 
+                ConfigService,
+                LobbyService
+                ] 
 })
 @RouteConfig([
     {
@@ -53,6 +59,11 @@ import {RouteConfig, ROUTER_PROVIDERS, ROUTER_DIRECTIVES} from 'angular2/router'
         path: '/respond/:tracker',
         name: 'Respond',
         component: Respond
+    },
+    {
+        path: '/lobby',
+        name: 'Lobby',
+        component: Lobby
     }
 ])
 export class LFApp {

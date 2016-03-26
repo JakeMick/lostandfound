@@ -1,7 +1,7 @@
 import {Injectable}                               from 'angular2/core';
 import {Http, Response, Headers, URLSearchParams,
-        RequestOptions} from 'angular2/http';
-import {Credential, Email, User}           from '../dto/email';
+        RequestOptions}                           from 'angular2/http';
+import {Credential, Email, User}                  from '../dto/email';
 import {Token}                                    from '../dto/token';
 import {Observable}                               from 'rxjs/Observable';
 import {ConfigService}                            from '../../config';
@@ -14,6 +14,8 @@ export class LoginService {
     private loginUrl = this.config.restUrl + 'auth/token';
     private trackerUrl = this.config.restUrl + 'auth/tracker';
     private userUrl = this.config.restUrl + 'auth/user';
+    
+    private token;
     
     create(user: User) : Observable<any> {
         let body = JSON.stringify(user);
@@ -33,23 +35,28 @@ export class LoginService {
             search: params
         });
         
-        return this.http.post(this.trackerUrl, '', options)
-            .map(res => res);
+        return this.http.post(this.trackerUrl, '', options);
     }
 
-    authenticate(credential: Credential) : Observable<Token> {
-        
+    authenticate(credential: Credential) : Observable<any> {
         let body = JSON.stringify(credential)
-
         let headers = new Headers({
             'Content-Type': 'application/json',
         });
-        
         let options = new RequestOptions({
             headers: headers
         });
-        return this.http.post(this.loginUrl, body, options)
-            .map(res => <Token>res.json().data);
+        let obs = this.http.post(this.loginUrl, body, options);
+        obs.subscribe(res => this.setToken(res.text()))
+        return obs
+    }
+    
+    private setToken(token: string) {
+        this.token = token;
+    }
+    
+    getToken() : string {
+        return this.token;
     }
 }
 

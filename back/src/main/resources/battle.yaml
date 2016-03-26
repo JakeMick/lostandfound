@@ -1,7 +1,9 @@
 server:
   rootPath: /api/
 
-corsEnabled: true
+cors:
+  enabled: true
+  frontEndOrigin: http://localhost:3000
 
 auth:
   baseUrl: derp.org

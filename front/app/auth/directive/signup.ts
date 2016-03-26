@@ -8,21 +8,21 @@ import {Email} from '../dto/email';
     template: `
       <div class="signup-panel">
         <p class="welcome">Sign-up</p>
-      <form (ngSubmit)="sendTracker()">
-            <div class="row collapse">
-                <div class="small-2 small-offset-3 columns">
-                    <span class="prefix"><i class="fi-mail"></i></span>
+        <form (ngSubmit)="sendTracker()">
+                <div class="row collapse">
+                    <div class="small-2 small-offset-3 columns">
+                        <span class="prefix"><i class="fi-mail"></i></span>
+                    </div>
+                    <div class="small-4 columns">
+                        <input type="text" [(ngModel)]="emailTracker.email" placeholder="email" required>
+                    </div>
+                    <div class="small-4 columns">
+                    </div>
                 </div>
-                <div class="small-4 columns">
-                    <input type="text" [(ngModel)]="emailTracker.email" placeholder="email" required>
+                <div class="centered">
+                    <button type="submit">Sign Up</button>
                 </div>
-                <div class="small-4 columns">
-                </div>
-            </div>
-            <div class="centered">
-                <button type="submit">Sign Up</button>
-            </div>
-      </form>
+        </form>
         <div class="row collapse" *ngIf="isSuccess">
             <div class="medium-2 medium-offset-5 columns">
                 <div data-alert class="alert-box success radius">

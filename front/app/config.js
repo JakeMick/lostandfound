@@ -21,6 +21,7 @@ System.register(['angular2/core'], function(exports_1, context_1) {
             ConfigService = (function () {
                 function ConfigService() {
                     this.restUrl = "http://localhost:8080/api/";
+                    this.websocketUrl = "http://localhost:8080/ws/";
                 }
                 ConfigService = __decorate([
                     core_1.Injectable(), 

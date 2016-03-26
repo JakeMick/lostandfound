@@ -67,8 +67,8 @@ export class Respond {
     
     constructor(private __loginService: LoginService,
                 private __router: Router,
-                private params: RouteParams) {
-        this.user.tracker = params.get("tracker");
+                private __params: RouteParams) {
+        this.user.tracker = __params.get("tracker");
         this.__loginService = __loginService;
         this.__router = __router;
     }

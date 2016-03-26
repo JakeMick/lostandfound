@@ -33,17 +33,17 @@ class BattleApplication() : Application<BattleConfiguration>() {
     }
 
 
-    private fun enableCors(env: Environment) {
+    private fun enableCors(env: Environment, frontEndOrigin: String) {
         val corsFilter = env.servlets().addFilter("CORS", CrossOriginFilter::class.java)
         corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,DELETE,OPTIONS")
-        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*")
+        corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, frontEndOrigin)
         corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin")
         corsFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType::class.java), true, "/*")
     }
 
     override fun run(config: BattleConfiguration, env: Environment) {
-        if (config.corsEnabled) {
-            enableCors(env)
+        if (config.cors.enabled) {
+            enableCors(env, config.cors.frontEndOrigin)
         }
 
         env.jersey().urlPattern = "/api/*"

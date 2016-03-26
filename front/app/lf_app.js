@@ -1,4 +1,4 @@
-System.register(['angular2/core', './auth/directive/signup', './auth/directive/signon', './auth/directive/respond', 'angular2/http', './config', './auth/service/login', 'angular2/router'], function(exports_1, context_1) {
+System.register(['angular2/core', './auth/directive/signup', './auth/directive/signon', './auth/directive/respond', './lobby/directive/lobby', './lobby/service/lobbycon', 'angular2/http', './config', './auth/service/login', 'angular2/router'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', './auth/directive/signup', './auth/directive/s
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, signup_1, signon_1, respond_1, http_1, config_1, login_1, router_1;
+    var core_1, signup_1, signon_1, respond_1, lobby_1, lobbycon_1, http_1, config_1, login_1, router_1;
     var LFApp;
     return {
         setters:[
@@ -25,6 +25,12 @@ System.register(['angular2/core', './auth/directive/signup', './auth/directive/s
             },
             function (respond_1_1) {
                 respond_1 = respond_1_1;
+            },
+            function (lobby_1_1) {
+                lobby_1 = lobby_1_1;
+            },
+            function (lobbycon_1_1) {
+                lobbycon_1 = lobbycon_1_1;
             },
             function (http_1_1) {
                 http_1 = http_1_1;
@@ -52,7 +58,9 @@ System.register(['angular2/core', './auth/directive/signup', './auth/directive/s
                         providers: [router_1.ROUTER_PROVIDERS,
                             http_1.HTTP_PROVIDERS,
                             login_1.LoginService,
-                            config_1.ConfigService]
+                            config_1.ConfigService,
+                            lobbycon_1.LobbyService
+                        ]
                     }),
                     router_1.RouteConfig([
                         {
@@ -70,6 +78,11 @@ System.register(['angular2/core', './auth/directive/signup', './auth/directive/s
                             path: '/respond/:tracker',
                             name: 'Respond',
                             component: respond_1.Respond
+                        },
+                        {
+                            path: '/lobby',
+                            name: 'Lobby',
+                            component: lobby_1.Lobby
                         }
                     ]), 
                     __metadata('design:paramtypes', [])

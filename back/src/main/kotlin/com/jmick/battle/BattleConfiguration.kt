@@ -13,7 +13,7 @@ class BattleConfiguration() : Configuration() {
     @Valid
     @NotNull
     @JsonProperty
-    val corsEnabled = false
+    val cors = CorsConfig()
 
     @Valid
     @NotNull
@@ -37,6 +37,19 @@ class BattleConfiguration() : Configuration() {
 
     @NotEmpty
     val jwtTokenSecret = "ya2ibxeqdy4k3x6rlwufo4bwlp39hf".toByteArray(UTF8);
+
+}
+
+class CorsConfig {
+    @Valid
+    @NotNull
+    @JsonProperty
+    val enabled = false
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    val frontEndOrigin = ""
 
 }
 

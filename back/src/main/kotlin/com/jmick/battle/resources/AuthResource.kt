@@ -25,7 +25,6 @@ import javax.ws.rs.core.Response
 
 
 @Path("/auth")
-@Produces(MediaType.APPLICATION_JSON)
 class AuthResource(val userDao: UserDAO,
                    val outboundEmailService: OutboundEmailService,
                    val jwtTokenSecret: ByteArray,
@@ -117,6 +116,8 @@ class AuthResource(val userDao: UserDAO,
 
     @POST
     @Path("/token")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     fun generateValidToken(
             @Valid credential: Credential): Response {
         val user = userDao.userByEmail(credential.email)
@@ -151,8 +152,7 @@ class AuthResource(val userDao: UserDAO,
                 false,
                 false)
         return Response
-                .status(Response.Status.OK)
-                .type(MediaType.APPLICATION_JSON)
+                .ok(signedToken, MediaType.TEXT_PLAIN)
                 .cookie(cookies)
                 .build()
     }

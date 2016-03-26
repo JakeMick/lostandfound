@@ -31,7 +31,8 @@ System.register(['angular2/core', 'angular2/router', './../service/login', '../d
                 function SignOn(__loginService, __router) {
                     this.__loginService = __loginService;
                     this.__router = __router;
-                    this.failed = false;
+                    this.isFailed = false;
+                    this.errorMsg = '';
                     this.credential = new email_1.Credential();
                     this.__loginService = __loginService;
                     this.__router = __router;
@@ -44,15 +45,25 @@ System.register(['angular2/core', 'angular2/router', './../service/login', '../d
                 };
                 SignOn.prototype.auth = function () {
                     var _this = this;
-                    this.failed = false;
+                    this.isFailed = false;
                     return this.getLoginService()
                         .authenticate(this.credential)
-                        .subscribe(function (token) { return _this.token = token; }, function (error) { return _this.failed = true; });
+                        .subscribe(function (token) { return _this.gotoLobby(); }, function (error) { return _this.failLogin(error); });
+                };
+                SignOn.prototype.failLogin = function (error) {
+                    this.isFailed = true;
+                    if (error.status == 401) {
+                        this.errorMsg = 'Email or password is incorrect';
+                    }
+                };
+                SignOn.prototype.gotoLobby = function () {
+                    this.isFailed = false;
+                    this.__router.navigate(['Lobby']);
                 };
                 SignOn = __decorate([
                     core_1.Component({
                         selector: 'signon-form',
-                        template: "\n      <div class=\"signup-panel\">\n        <p class=\"welcome\">Sign-on</p>\n        <form (ngSubmit)=\"auth()\">\n            <div class=\"row collapse\">\n                <div class=\"small-2 small-offset-3 columns\">\n                    <span class=\"prefix\"><i class=\"fi-mail\"></i></span>\n                </div>\n                <div class=\"small-4 columns\">\n                    <input type=\"text\" [(ngModel)]=\"credential.email\" placeholder=\"email\" required>\n                </div>\n                <div class=\"small-4 columns\">\n                </div>\n            </div>\n            <div class=\"row collapse\">\n                <div class=\"small-2 small-offset-3 columns \">\n                    <span class=\"prefix\"><i class=\"fi-lock\"></i></span>\n                </div>\n                <div class=\"small-4 columns\">\n                    <input type=\"password\" [(ngModel)]=\"credential.password\" placeholder=\"password\" required>\n                </div>\n                <div class=\"small-4 columns\">\n                </div>\n            </div>\n            <div class=\"centered\">\n                <button type=\"submit\">Sign On</button>\n            </div>\n            \n        </form>\n        <p>Don't have an account? <a (click)=\"signUp()\">Sign Up</a></p>\n      </div>\n            "
+                        template: "\n      <div class=\"signup-panel\">\n        <p class=\"welcome\">Sign-on</p>\n        <form (ngSubmit)=\"auth()\">\n            <div class=\"row collapse\">\n                <div class=\"small-2 small-offset-3 columns\">\n                    <span class=\"prefix\"><i class=\"fi-mail\"></i></span>\n                </div>\n                <div class=\"small-4 columns\">\n                    <input type=\"text\" [(ngModel)]=\"credential.email\" placeholder=\"email\" required>\n                </div>\n                <div class=\"small-4 columns\">\n                </div>\n            </div>\n            <div class=\"row collapse\">\n                <div class=\"small-2 small-offset-3 columns \">\n                    <span class=\"prefix\"><i class=\"fi-lock\"></i></span>\n                </div>\n                <div class=\"small-4 columns\">\n                    <input type=\"password\" [(ngModel)]=\"credential.password\" placeholder=\"password\" required>\n                </div>\n                <div class=\"small-4 columns\">\n                </div>\n            </div>\n            <div class=\"centered\">\n                <button type=\"submit\">Sign On</button>\n            </div>\n            \n        </form>\n        <div class=\"row collapse\" *ngIf=\"isFailed\">\n            <div class=\"medium-2 medium-offset-5 columns\">\n                <div data-alert class=\"alert-box alert radius\">\n                    <p>{{errorMsg}}</p>\n                </div>\n            </div>\n        </div>\n        <p>Don't have an account? <a (click)=\"signUp()\">Sign Up</a></p>\n      </div>\n            "
                     }), 
                     __metadata('design:paramtypes', [login_1.LoginService, router_1.Router])
                 ], SignOn);

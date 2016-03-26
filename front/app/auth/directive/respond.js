@@ -28,15 +28,15 @@ System.register(['angular2/core', 'angular2/router', './../service/login', '../d
             }],
         execute: function() {
             Respond = (function () {
-                function Respond(__loginService, __router, params) {
+                function Respond(__loginService, __router, __params) {
                     this.__loginService = __loginService;
                     this.__router = __router;
-                    this.params = params;
+                    this.__params = __params;
                     this.isFailed = false;
                     this.user = new email_1.User();
                     this.tracker = '';
                     this.errorMsg = '';
-                    this.user.tracker = params.get("tracker");
+                    this.user.tracker = __params.get("tracker");
                     this.__loginService = __loginService;
                     this.__router = __router;
                 }

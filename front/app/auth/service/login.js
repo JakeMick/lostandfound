@@ -48,10 +48,10 @@ System.register(['angular2/core', 'angular2/http', '../../config'], function(exp
                         headers: headers,
                         search: params
                     });
-                    return this.http.post(this.trackerUrl, '', options)
-                        .map(function (res) { return res; });
+                    return this.http.post(this.trackerUrl, '', options);
                 };
                 LoginService.prototype.authenticate = function (credential) {
+                    var _this = this;
                     var body = JSON.stringify(credential);
                     var headers = new http_1.Headers({
                         'Content-Type': 'application/json',
@@ -59,8 +59,15 @@ System.register(['angular2/core', 'angular2/http', '../../config'], function(exp
                     var options = new http_1.RequestOptions({
                         headers: headers
                     });
-                    return this.http.post(this.loginUrl, body, options)
-                        .map(function (res) { return res.json().data; });
+                    var obs = this.http.post(this.loginUrl, body, options);
+                    obs.subscribe(function (res) { return _this.setToken(res.text()); });
+                    return obs;
+                };
+                LoginService.prototype.setToken = function (token) {
+                    this.token = token;
+                };
+                LoginService.prototype.getToken = function () {
+                    return this.token;
                 };
                 LoginService = __decorate([
                     core_1.Injectable(), 
