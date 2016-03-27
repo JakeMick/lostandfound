@@ -13,8 +13,7 @@ export class LoginService {
 
     private loginUrl = this.config.restUrl + 'auth/token';
     private trackerUrl = this.config.restUrl + 'auth/tracker';
-    private userUrl = this.config.restUrl + 'auth/user';
-    
+    private userUrl = this.config.restUrl + 'auth/user';  
     private token;
     
     create(user: User) : Observable<any> {

@@ -1,7 +1,6 @@
-package com.jmick.battle.health
+package com.jmick.battle.auth
 
 import com.codahale.metrics.health.HealthCheck
-import com.jmick.battle.dao.UserDAO
 
 class AuthHealthCheck(val userDAO: UserDAO) : HealthCheck() {
     override fun check() : Result {

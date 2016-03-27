@@ -1,4 +1,4 @@
-package com.jmick.battle.service
+package com.jmick.battle.auth
 
 import com.sendgrid.SendGrid
 import com.sendgrid.SendGridException

@@ -1,14 +1,9 @@
-package com.jmick.battle.resources;
+package com.jmick.battle.auth;
 
 import com.github.toastshaman.dropwizard.auth.jwt.hmac.HmacSHA512Signer
 import com.github.toastshaman.dropwizard.auth.jwt.model.JsonWebToken
 import com.github.toastshaman.dropwizard.auth.jwt.model.JsonWebTokenClaim
 import com.github.toastshaman.dropwizard.auth.jwt.model.JsonWebTokenHeader
-import com.jmick.battle.auth.MyUser
-import com.jmick.battle.core.Credential
-import com.jmick.battle.core.User
-import com.jmick.battle.dao.UserDAO
-import com.jmick.battle.service.OutboundEmailService
 import com.sendgrid.SendGrid
 import io.dropwizard.auth.Auth
 import org.joda.time.DateTime

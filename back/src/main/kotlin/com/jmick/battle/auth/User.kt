@@ -1,4 +1,4 @@
-package com.jmick.battle.core;
+package com.jmick.battle.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import javax.validation.constraints.NotNull

@@ -1,20 +1,19 @@
 package com.jmick.battle
 
 import com.github.toastshaman.dropwizard.auth.jwt.JWTAuthFilter
+import com.github.toastshaman.dropwizard.auth.jwt.JsonWebTokenValidator
 import com.github.toastshaman.dropwizard.auth.jwt.hmac.HmacSHA512Verifier
 import com.github.toastshaman.dropwizard.auth.jwt.parser.DefaultJsonWebTokenParser
-import com.jmick.battle.auth.LFAuthenticator
-import com.jmick.battle.auth.MyUser
-import com.jmick.battle.dao.UserDAO
-import com.jmick.battle.health.AuthHealthCheck
-import com.jmick.battle.resources.AuthResource
-import com.jmick.battle.service.OutboundEmailService
+import com.github.toastshaman.dropwizard.auth.jwt.validator.ExpiryValidator
+import com.jmick.battle.auth.*
+import com.jmick.battle.lobby.*
 import io.dropwizard.Application
 import io.dropwizard.auth.AuthDynamicFeature
 import io.dropwizard.auth.AuthValueFactoryProvider
 import io.dropwizard.jdbi.DBIFactory
 import io.dropwizard.setup.Bootstrap
 import io.dropwizard.setup.Environment
+import io.dropwizard.websockets.WebsocketBundle
 import org.eclipse.jetty.servlets.CrossOriginFilter
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
 import java.security.Principal
@@ -30,6 +29,7 @@ class BattleApplication() : Application<BattleConfiguration>() {
     }
 
     override fun initialize(bootstrap: Bootstrap<BattleConfiguration>) {
+        bootstrap.addBundle(WebsocketBundle(LobbySession::class.java))
     }
 
 
@@ -54,18 +54,31 @@ class BattleApplication() : Application<BattleConfiguration>() {
 
         val tokenParser = DefaultJsonWebTokenParser()
         val tokenVerifier = HmacSHA512Verifier(config.jwtTokenSecret)
-        env.jersey().register(AuthDynamicFeature(
-                JWTAuthFilter.Builder<MyUser>()
-                        .setCookieName("token")
-                        .setTokenParser(tokenParser)
-                        .setTokenVerifier(tokenVerifier)
-                        .setRealm("realm")
-                        .setPrefix("Bearer")
-                        .setAuthenticator(LFAuthenticator(userDao))
-                        .buildAuthFilter()))
-        env.jersey().register(AuthValueFactoryProvider.Binder(Principal::class.java))
-        env.jersey().register(RolesAllowedDynamicFeature::class.java)
+        val expiryValidator = ExpiryValidator()
+        createAndRegisterAuthentication(tokenParser,
+                                        tokenVerifier,
+                                        expiryValidator,
+                                        env,
+                                        userDao)
 
+        createAndRegisterAuthorization(config, env, userDao)
+
+        createLobby(tokenParser, tokenVerifier, expiryValidator)
+
+    }
+
+    private fun createAndRegisterAuthentication(tokenParser: DefaultJsonWebTokenParser,
+                                                tokenVerifier: HmacSHA512Verifier,
+                                                expiryValidator: JsonWebTokenValidator,
+                                                env: Environment,
+                                                userDao: UserDAO) {
+        val lfAuthenticator = LFAuthenticator(userDao, expiryValidator)
+        registerAuthentication(env, tokenParser, tokenVerifier, lfAuthenticator)
+    }
+
+    private fun createAndRegisterAuthorization(config: BattleConfiguration,
+                                               env: Environment,
+                                               userDao: UserDAO) {
         val outboundEmailService = OutboundEmailService(config.auth.sendGridUser,
                 config.auth.sendGridPass);
 
@@ -82,4 +95,30 @@ class BattleApplication() : Application<BattleConfiguration>() {
         env.healthChecks().register("user dao health check", authHealthCheck);
     }
 
+    private fun createLobby(tokenParser: DefaultJsonWebTokenParser,
+                            tokenVerifier: HmacSHA512Verifier,
+                            expiryValidator: JsonWebTokenValidator) {
+        val auth = WebSocketAuthService(tokenParser, tokenVerifier, expiryValidator)
+        val commandParser = WebSocketCommandParser(auth)
+        LobbyDelegate.lobby = Lobby(commandParser)
+    }
+
+    private fun registerAuthentication(env: Environment,
+                                       tokenParser: DefaultJsonWebTokenParser,
+                                       tokenVerifier: HmacSHA512Verifier,
+                                       lfAuthenticator: LFAuthenticator) {
+        env.jersey().register(AuthDynamicFeature(
+                JWTAuthFilter.Builder<MyUser>()
+                        .setCookieName("token")
+                        .setTokenParser(tokenParser)
+                        .setTokenVerifier(tokenVerifier)
+                        .setRealm("realm")
+                        .setPrefix("Bearer")
+                        .setAuthenticator(lfAuthenticator)
+                        .buildAuthFilter()))
+        env.jersey().register(AuthValueFactoryProvider.Binder(Principal::class.java))
+        env.jersey().register(RolesAllowedDynamicFeature::class.java)
+    }
+
 }
+

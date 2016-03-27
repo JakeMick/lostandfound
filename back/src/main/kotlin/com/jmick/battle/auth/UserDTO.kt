@@ -1,4 +1,4 @@
-package com.jmick.battle.dao
+package com.jmick.battle.auth
 
 import org.joda.time.DateTime
 import org.skife.jdbi.v2.StatementContext

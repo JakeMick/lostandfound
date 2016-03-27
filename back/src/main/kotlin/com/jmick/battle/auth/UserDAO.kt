@@ -1,4 +1,4 @@
-package com.jmick.battle.dao
+package com.jmick.battle.auth
 
 import org.skife.jdbi.v2.sqlobject.Bind
 import org.skife.jdbi.v2.sqlobject.SqlQuery
