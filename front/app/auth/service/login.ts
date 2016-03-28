@@ -15,6 +15,7 @@ export class LoginService {
     private trackerUrl = this.config.restUrl + 'auth/tracker';
     private userUrl = this.config.restUrl + 'auth/user';  
     private token;
+    isAuthenticated = false;
     
     create(user: User) : Observable<any> {
         let body = JSON.stringify(user);
@@ -46,8 +47,11 @@ export class LoginService {
             headers: headers
         });
         let obs = this.http.post(this.loginUrl, body, options);
-        obs.subscribe(res => this.setToken(res.text()))
-        return obs
+        obs.subscribe(res => {
+            this.setToken(res.text())
+            this.isAuthenticated = true;
+        });
+        return obs;
     }
     
     private setToken(token: string) {

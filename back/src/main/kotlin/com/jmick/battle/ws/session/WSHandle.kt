@@ -1,8 +1,8 @@
-package com.jmick.battle.lobby
+package com.jmick.battle.ws.session
 
 import javax.websocket.CloseReason
 
-interface WebSocketHandle<T> {
+interface WSHandle<T> {
     open fun removeSession(session: T, closeReason: CloseReason)
     open fun addSession(session: T)
     open fun onMessage(session: T, message: String?)

@@ -1,6 +1,35 @@
-.lobby{
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin-top: 30px;
+.lobby {
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-top: 30px;
+  
+  i {
+    font-size: 30px;
+    line-height: 50px;
+    color: #999;
+  }
+  
+  form {
+    input, span{
+        height: 50px;
+    }
+  }
+
+  p{
+    text-align: center;
+    font-size: 13px;
+    font-weight: 200;
+    margin-left: 0%;
+  }
+  
+  .centered {
+    text-align: center;
+  }
+  
+  .button{
+    text-align: center;
+    margin-left: 0%;
+  }
+  
 }

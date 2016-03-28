@@ -4,7 +4,8 @@ import {SignOn} from './auth/directive/signon';
 import {Respond} from './auth/directive/respond';
 
 import {Lobby} from './lobby/directive/lobby';
-import {LobbyService} from './lobby/service/lobbycon';
+import {WebSocketService} from './lobby/service/ws';
+import {LobbyService} from './lobby/service/lobbyfilter';
 
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {ConfigService} from './config'
@@ -40,6 +41,7 @@ import {RouteConfig, ROUTER_PROVIDERS, ROUTER_DIRECTIVES} from 'angular2/router'
                 HTTP_PROVIDERS,
                 LoginService,
                 ConfigService,
+                WebSocketService,
                 LobbyService
                 ] 
 })

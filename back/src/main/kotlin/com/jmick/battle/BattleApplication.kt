@@ -6,7 +6,12 @@ import com.github.toastshaman.dropwizard.auth.jwt.hmac.HmacSHA512Verifier
 import com.github.toastshaman.dropwizard.auth.jwt.parser.DefaultJsonWebTokenParser
 import com.github.toastshaman.dropwizard.auth.jwt.validator.ExpiryValidator
 import com.jmick.battle.auth.*
-import com.jmick.battle.lobby.*
+import com.jmick.battle.ws.WSManager
+import com.jmick.battle.ws.command.CommandParser
+import com.jmick.battle.ws.command.MessagePublishingService
+import com.jmick.battle.ws.command.WSAuthService
+import com.jmick.battle.ws.session.WSDelegate
+import com.jmick.battle.ws.session.WSSession
 import io.dropwizard.Application
 import io.dropwizard.auth.AuthDynamicFeature
 import io.dropwizard.auth.AuthValueFactoryProvider
@@ -29,7 +34,7 @@ class BattleApplication() : Application<BattleConfiguration>() {
     }
 
     override fun initialize(bootstrap: Bootstrap<BattleConfiguration>) {
-        bootstrap.addBundle(WebsocketBundle(LobbySession::class.java))
+        bootstrap.addBundle(WebsocketBundle(WSSession::class.java))
     }
 
 
@@ -98,9 +103,10 @@ class BattleApplication() : Application<BattleConfiguration>() {
     private fun createLobby(tokenParser: DefaultJsonWebTokenParser,
                             tokenVerifier: HmacSHA512Verifier,
                             expiryValidator: JsonWebTokenValidator) {
-        val auth = WebSocketAuthService(tokenParser, tokenVerifier, expiryValidator)
-        val commandParser = WebSocketCommandParser(auth)
-        LobbyDelegate.lobby = Lobby(commandParser)
+        val auth = WSAuthService(tokenParser, tokenVerifier, expiryValidator)
+        val mesg = MessagePublishingService()
+        val commandParser = CommandParser(auth, mesg)
+        WSDelegate.WS = WSManager(commandParser, mesg)
     }
 
     private fun registerAuthentication(env: Environment,
