@@ -1,13 +1,13 @@
 .signup-panel {
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid $iron;
   padding: 15px;
   margin-top: 30px;
   
   i {
     font-size: 30px;
     line-height: 50px;
-    color: #999;
+    color: $aluminum;
   }
   
   form {

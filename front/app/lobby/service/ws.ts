@@ -23,11 +23,11 @@ export class WebSocketService {
         'CLOSED': 3,
         'RECONNECT_ABORTED': 4
     };
-    private  normalCloseCode = 1000;
-    private  reconnectableStatusCodes = [4000];
+    private normalCloseCode = 1000;
+    private reconnectableStatusCodes = [4000];
     private socket: WebSocket;
     private dataStream: Subject<string>;
-    private  internalConnectionState: number;
+    private internalConnectionState: number;
     private url: string;
     private protocols: string[];
     

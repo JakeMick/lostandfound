@@ -46,7 +46,13 @@ class AuthResource(val userDao: UserDAO,
     fun createUser(@Valid user: User): Response {
         val tracker = userDao.trackerByEmail(user.email)
         val userDTO = userDao.userByEmail(user.email)
-        if (tracker == null || userDTO != null || !tracker.equals(user.tracker)) {
+        if (tracker == null
+                || userDTO != null
+                || !tracker.equals(user.tracker)
+                || !isAlphanumeric(user.username)
+                || user.username.length > 20
+                || user.password.length > 100
+                || user.email.length > 100) {
             return Response
                 .status(Response.Status.EXPECTATION_FAILED)
                 .build()
@@ -66,6 +72,16 @@ class AuthResource(val userDao: UserDAO,
                 .accepted(mapOf("user" to user.username))
                 .build()
 
+    }
+
+
+    fun isAlphanumeric(str : String) : Boolean {
+        for (i in 0..str.length) {
+            val c = str[i];
+            if (!Character.isDigit(c) && !Character.isLetter(c))
+                return false;
+        }
+        return true;
     }
 
     @POST
