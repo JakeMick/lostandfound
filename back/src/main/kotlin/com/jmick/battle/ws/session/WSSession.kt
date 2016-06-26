@@ -8,7 +8,8 @@ import javax.websocket.*
 import javax.websocket.server.ServerEndpoint
 
 
-data class Verified(val username: String,
+data class Verified(val userid: Int,
+                    val username: String,
                     val nuclear: Boolean,
                     val post: Boolean,
                     val verified: Boolean = true) {

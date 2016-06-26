@@ -1,13 +1,44 @@
 .lobby {
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid $iron;
   padding: 15px;
   margin-top: 30px;
+  word-wrap: break-word;
+  
+  .system {
+      color: $success-color;
+  }
+  
+  .members {
+      border: 1px solid $iron;
+      color: $monsoon;
+      min-height: 70vh;
+      max-height: 70vh;
+      overflow-y: scroll;
+  }
+  .author {
+      color: $monsoon;
+  }
+  
+  .message {
+      color: $tuatara;
+  }
+  
+  .chat {
+      border: 1px solid $iron;
+      min-height: 70vh;
+      max-height: 70vh;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      .row {
+          margin: 3px;
+      }
+  }
   
   i {
     font-size: 30px;
     line-height: 50px;
-    color: #999;
+    color: $aluminum;
   }
   
   form {

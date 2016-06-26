@@ -1,7 +1,11 @@
-﻿create table email_tracking (
-	tracker uuid primary key,
-	email text unique
+﻿CREATE TABLE email_tracking
+(
+  tracker UUID PRIMARY KEY,
+  email   TEXT UNIQUE
 );
 
-create unique index on email_tracking (tracker);
 
+CREATE UNIQUE INDEX email_tracking_tracker_idx
+ON email_tracking
+USING BTREE
+(tracker);

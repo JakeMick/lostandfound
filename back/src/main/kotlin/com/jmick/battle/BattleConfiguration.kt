@@ -5,6 +5,7 @@ import io.dropwizard.Configuration
 import io.dropwizard.db.DataSourceFactory
 import org.hibernate.validator.constraints.NotEmpty
 import java.nio.charset.Charset
+import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.NotNull
 
@@ -14,6 +15,11 @@ class BattleConfiguration() : Configuration() {
     @NotNull
     @JsonProperty
     val cors = CorsConfig()
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    val kafka = KafkaConfig()
 
     @Valid
     @NotNull
@@ -38,6 +44,36 @@ class BattleConfiguration() : Configuration() {
     @NotEmpty
     val jwtTokenSecret = "ya2ibxeqdy4k3x6rlwufo4bwlp39hf".toByteArray(UTF8);
 
+}
+
+class KafkaConfig {
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    val bootstrapServer = ""
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    val groupId = ""
+
+    @Valid
+    @NotNull
+    @JsonProperty
+    val autoCreateTopics = true
+}
+
+fun getMap(kafkaConfig: KafkaConfig) : MutableMap<String, Any>  {
+    val result = HashMap<String, Any>();
+    result.put("bootstrap.servers", kafkaConfig.bootstrapServer)
+    result.put("group.id", kafkaConfig.groupId)
+    result.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+    result.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+    result.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
+    result.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
+    result.put("auto.create.topics.enable", kafkaConfig.autoCreateTopics)
+    return result;
 }
 
 class CorsConfig {

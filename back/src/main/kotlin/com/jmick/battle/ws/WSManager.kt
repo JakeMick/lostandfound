@@ -1,8 +1,8 @@
 package com.jmick.battle.ws
 
 import com.google.common.collect.Sets
+import com.jmick.battle.ws.command.chat.ChatService
 import com.jmick.battle.ws.command.CommandParser
-import com.jmick.battle.ws.command.MessagePublishingService
 import com.jmick.battle.ws.session.WSHandle
 import com.jmick.battle.ws.session.WSSession
 import org.slf4j.LoggerFactory
@@ -14,29 +14,29 @@ import java.util.concurrent.TimeUnit
 import javax.websocket.CloseReason
 
 class WSManager(val commandHandler: CommandParser,
-                val mesg: MessagePublishingService) : WSHandle<WSSession> {
+                val chatService: ChatService) : WSHandle<WSSession> {
     val logger = LoggerFactory.getLogger(WSSession::class.java)
     val sessions = Sets.newConcurrentHashSet<WSSession>()
     val ses = getSES()
     val ping = ByteBuffer.wrap("ping".toByteArray("UTF-8"))
 
     private fun getSES(): ScheduledExecutorService {
-        val ses = ScheduledThreadPoolExecutor(1)
+        val ses = ScheduledThreadPoolExecutor(3)
         ses.scheduleWithFixedDelay({
             try {
-                if (mesg.multicast.isEmpty()) {
+                if (chatService.multicast.isEmpty()) {
                     return@scheduleWithFixedDelay
                 }
-                val nextMsg = mesg.multicast.take()
-                for (session in sessions) {
-                    if (nextMsg != null) {
-                        session.sendMessage(nextMsg)
+                while (!chatService.multicast.isEmpty()) {
+                    val nextMesg = chatService.multicast.pop();
+                    for (session in sessions) {
+                        session.sendMessage(nextMesg)
                     }
                 }
             } catch (e: Exception) {
                 logger.error("Message sending failed for reason ", e)
             }
-        }, 10, 1, TimeUnit.SECONDS)
+        }, 10, 33, TimeUnit.MILLISECONDS)
 
         ses.scheduleWithFixedDelay({
             try {
@@ -53,11 +53,11 @@ class WSManager(val commandHandler: CommandParser,
         }, 10, 10, TimeUnit.SECONDS)
 
         ses.scheduleWithFixedDelay({
-            if (mesg.deauth.isEmpty()) {
+            if (chatService.deauth.isEmpty()) {
                 return@scheduleWithFixedDelay
             }
-            val deauthRequest = mesg.deauth.take()
             try {
+                val deauthRequest = chatService.deauth.take()
                 logger.info("Deauthenticating user")
                 deauthRequest.session?.close()
                 sessions.remove(deauthRequest.session)

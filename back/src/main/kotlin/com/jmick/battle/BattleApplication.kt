@@ -8,8 +8,9 @@ import com.github.toastshaman.dropwizard.auth.jwt.validator.ExpiryValidator
 import com.jmick.battle.auth.*
 import com.jmick.battle.ws.WSManager
 import com.jmick.battle.ws.command.CommandParser
-import com.jmick.battle.ws.command.MessagePublishingService
 import com.jmick.battle.ws.command.WSAuthService
+import com.jmick.battle.ws.command.chat.ChatDAO
+import com.jmick.battle.ws.command.chat.ChatService
 import com.jmick.battle.ws.session.WSDelegate
 import com.jmick.battle.ws.session.WSSession
 import io.dropwizard.Application
@@ -19,6 +20,8 @@ import io.dropwizard.jdbi.DBIFactory
 import io.dropwizard.setup.Bootstrap
 import io.dropwizard.setup.Environment
 import io.dropwizard.websockets.WebsocketBundle
+import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.clients.producer.KafkaProducer
 import org.eclipse.jetty.servlets.CrossOriginFilter
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature
 import java.security.Principal
@@ -61,14 +64,23 @@ class BattleApplication() : Application<BattleConfiguration>() {
         val tokenVerifier = HmacSHA512Verifier(config.jwtTokenSecret)
         val expiryValidator = ExpiryValidator()
         createAndRegisterAuthentication(tokenParser,
-                                        tokenVerifier,
-                                        expiryValidator,
-                                        env,
-                                        userDao)
+                tokenVerifier,
+                expiryValidator,
+                env,
+                userDao)
 
         createAndRegisterAuthorization(config, env, userDao)
 
-        createLobby(tokenParser, tokenVerifier, expiryValidator)
+        val kafkaConfig = getMap(config.kafka)
+        val kafkaConsumer = KafkaConsumer<String, String>(kafkaConfig)
+        val kafkaProducer = KafkaProducer<String, String>(kafkaConfig)
+        val chatDao = jdbi.onDemand(ChatDAO::class.java)
+        createLobby(tokenParser,
+                tokenVerifier,
+                expiryValidator,
+                kafkaConsumer,
+                kafkaProducer,
+                chatDao)
 
     }
 
@@ -102,9 +114,12 @@ class BattleApplication() : Application<BattleConfiguration>() {
 
     private fun createLobby(tokenParser: DefaultJsonWebTokenParser,
                             tokenVerifier: HmacSHA512Verifier,
-                            expiryValidator: JsonWebTokenValidator) {
-        val auth = WSAuthService(tokenParser, tokenVerifier, expiryValidator)
-        val mesg = MessagePublishingService()
+                            expiryValidator: JsonWebTokenValidator,
+                            kafkaConsumer: KafkaConsumer<String, String>,
+                            kafkaProducer: KafkaProducer<String, String>,
+                            chatDao: ChatDAO) {
+        val mesg = ChatService(kafkaConsumer, kafkaProducer, chatDao)
+        val auth = WSAuthService(tokenParser, tokenVerifier, expiryValidator, mesg)
         val commandParser = CommandParser(auth, mesg)
         WSDelegate.WS = WSManager(commandParser, mesg)
     }

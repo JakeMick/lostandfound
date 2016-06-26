@@ -29,6 +29,9 @@ import {RouteConfig, ROUTER_PROVIDERS, ROUTER_DIRECTIVES} from 'angular2/router'
             <ul class="left">
                 <li><a [routerLink]="['SignOn']">Login</a></li>
             </ul>
+            <ul class="left">
+                <li><a [routerLink]="['Lobby']">Lobby</a></li>
+            </ul>
         </section>
     </nav>
     <router-outlet></router-outlet>
@@ -36,6 +39,7 @@ import {RouteConfig, ROUTER_PROVIDERS, ROUTER_DIRECTIVES} from 'angular2/router'
     `,
     directives: [ROUTER_DIRECTIVES,
                  SignUp,
+                 Lobby,
                  SignOn],
     providers: [ROUTER_PROVIDERS,
                 HTTP_PROVIDERS,

@@ -10,16 +10,30 @@ class WSCommand(val command: Command) {
         sb.append(command.ordinal)
     }
 
-    fun addElem(elem: String): WSCommand {
-        sb.append(colon)
+    fun addElem(elem: Int): WSCommand {
+        appendSeparator()
         sb.append(elem)
-        return this;
+        return this
     }
 
-    fun addElemBase64(elem: String): WSCommand {
-        sb.append(colon)
-        sb.append(Base64.getEncoder().encode(elem.toByteArray(Charsets.UTF_8)).toString(Charsets.UTF_8))
+    fun addElem(elem: String?): WSCommand {
+        appendSeparator()
+        if (elem != null) {
+            sb.append(elem)
+        }
         return this
+    }
+
+    fun addElemBase64(elem: String?): WSCommand {
+        appendSeparator()
+        if (elem != null) {
+            sb.append(Base64.getEncoder().encode(elem.toByteArray(Charsets.UTF_8)).toString(Charsets.UTF_8))
+        }
+        return this
+    }
+
+    private fun appendSeparator() {
+        sb.append(colon)
     }
 
     fun build() : String {

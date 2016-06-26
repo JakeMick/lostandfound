@@ -55,16 +55,19 @@ export function messageType(mesg: string) : Protocol {
 }
 
 export class ChatMessage extends Response {
+    chatroom;
     id;
     author;
     body;
-
+    userAdded = false;
+    userRemoved = false;
     constructor(mesg: string) {
         super()
         let splitted = this.split(mesg);
-        this.id = +splitted[0];
-        this.author = atob(splitted[1])
-        this.body = atob(splitted[2]);
+        this.chatroom = +splitted[0]
+        this.id = +splitted[1];
+        this.author = atob(splitted[2])
+        this.body = atob(splitted[3]);
     }
 
 }
